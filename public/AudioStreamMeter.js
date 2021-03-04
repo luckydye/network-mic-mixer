@@ -1,6 +1,6 @@
 import { html, LitElement } from 'https://cdn.pika.dev/lit-element';
 
-const audioContext = new AudioContext();
+let audioContext = null;
 
 export default class AudioStreamMeter extends LitElement {
 
@@ -8,6 +8,12 @@ export default class AudioStreamMeter extends LitElement {
         super();
         
         this.name = name;
+    }
+
+    connectedCallback() {
+        if(!audioContext) {
+            audioContext = new AudioContext();
+        }
         
         this.analyser = audioContext.createAnalyser();
         this.analyser.fftSize = 256;

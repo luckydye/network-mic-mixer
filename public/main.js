@@ -115,6 +115,7 @@ function getSocketProtocol() {
 }
 
 function connectSocket(reciever = true) {
+    console.log('Trying to connect...');
     if(reciever) {
         const socket = new WebSocket(getSocketProtocol() + location.host);
         socket.onerror = e => {
@@ -166,10 +167,17 @@ function connectSocket(reciever = true) {
     }
 }
 
-if(location.search == "?reciever") {
-    reciever = true;
-    connectSocket();
-} else {
-    reciever = false;
-    connectSocket(false);
+const btn = document.createElement('button');
+btn.innerHTML = "Connect";
+btn.onclick = () => {
+    btn.remove();
+
+    if(location.search == "?reciever") {
+        reciever = true;
+        connectSocket();
+    } else if(location.search == "?sender") {
+        reciever = false;
+        connectSocket(false);
+    }
 }
+document.body.append(btn);
