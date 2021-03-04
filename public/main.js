@@ -107,9 +107,13 @@ function connectToIce(socket, ice, answer) {
     }));
 }
 
+getSocketProtocol() {
+    return location.protocol[4] == "s" ? "wss" : "ws";
+}
+
 function connectSocket(reciever = true) {
     if(reciever) {
-        const socket = new WebSocket('ws:' + location.host);
+        const socket = new WebSocket(getSocketProtocol() + location.host);
         socket.onerror = e => {
             console.log('Socket Error');
         }
@@ -133,7 +137,7 @@ function connectSocket(reciever = true) {
 
         return socket;
     } else {
-        const socket = new WebSocket('ws:' + location.host);
+        const socket = new WebSocket(getSocketProtocol() + location.host);
         let client = null;
         socket.onerror = e => {
             console.log('Socket Error');
