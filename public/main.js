@@ -16,10 +16,13 @@ async function createWirelessMicClient() {
         }
         dc.onopen = e => {
             console.log('Connected to peer');
-            const micMeter = new AudioStreamMeter("Microphone");
-            micMeter.setSourceStream(mic);
-            document.body.appendChild(micMeter);
         }
+
+        const micMeter = new AudioStreamMeter("Microphone");
+        micMeter.setSourceStream(mic);
+        const vid = document.createElement('video');
+        vid.srcObject = mic;
+        document.body.appendChild(micMeter);
 
         let lastIce = null;
         lc.onicecandidate = e => {
