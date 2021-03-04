@@ -96,7 +96,7 @@ export default class AudioStreamMeter extends LitElement {
         this.target = avrg;
 
         if(Number.isFinite(this.target)) {
-            this.value += (this.target - this.value) * 0.0033;
+            this.value += (this.target - this.value) * 0.033;
         }
 
         this.history.push(this.target);
