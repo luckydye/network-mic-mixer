@@ -77,7 +77,9 @@ function handleOutputChange(device) {
     currentAudioDestination = audioContext.createMediaStreamDestination(device);
     audio.srcObject = currentAudioDestination.stream;
     audio.play();
-    audio.setSinkId(device.deviceId);
+    if(audio.setSinkId) {
+        audio.setSinkId(device.deviceId);
+    }
 
     outputMeter.setSourceStream(currentAudioDestination.stream);
 
