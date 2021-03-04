@@ -144,6 +144,7 @@ export default class AudioStreamMeter extends LitElement {
                     background: #191919;
                     image-rendering: pixelated;
                     width: 100%;
+                    height: 4px;
                     display: block;
                     margin-bottom: 1px;
                 }
