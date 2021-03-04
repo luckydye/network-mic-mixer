@@ -1,6 +1,101 @@
 import AudioStreamMeter from './AudioStreamMeter.js';
 
 let reciever = false;
+let streams = [];
+let audioContext = null;
+let devices = [];
+let currentOutputDevice = null;
+let currentAudioDestination = null;
+
+let outputMeter = null;
+
+function getDeviceByLabel(label) {
+    return devices.find(dev => dev.label == label);
+}
+
+async function getMediaDevies(deviceType = "audiooutput") {
+    const devices = [];
+    return navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
+        return navigator.mediaDevices.enumerateDevices().then(d => {
+            for(let device of d) {
+                if(device.kind == deviceType) {
+                    devices.push(device);
+                }
+            }
+            return devices;
+        }).catch(console.error);
+    }).catch(console.error);    
+}
+
+function handleRemoteStream(stream) {
+    const vid = document.createElement('video');
+    vid.srcObject = stream;
+    const audioMeter = new AudioStreamMeter("Remote Microphone");
+    audioMeter.setSourceStream(stream);
+    document.body.appendChild(audioMeter);
+    streams.push(stream);
+
+    updateOutputStream();
+}
+
+async function updateOutputStream() {
+    devices = await getMediaDevies();
+    
+    for(let stream of streams) {
+        const audioSource = audioContext.createMediaStreamSource(stream);
+        console.log('Source', audioSource);
+        console.log('Dest', currentAudioDestination);
+        audioSource.connect(currentAudioDestination);
+    }
+}
+
+function createOutputDeviceSelect(devices) {
+    const select = document.createElement('select');
+    for(let device of devices) {
+        const opt = document.createElement('option');
+        opt.innerHTML = device.label;
+        select.appendChild(opt);
+    }
+    return select;
+}
+
+const audio = new Audio();
+
+function handleOutputChange(device) {
+    if(!device) {
+        console.error('No device selected');
+        return;
+    }
+
+    currentOutputDevice = device;
+    currentAudioDestination = audioContext.createMediaStreamDestination(device);
+    audio.srcObject = currentAudioDestination.stream;
+    audio.play();
+    audio.setSinkId(device.deviceId);
+
+    outputMeter.setSourceStream(currentAudioDestination.stream);
+
+    console.log('Device selected', device);
+
+    updateOutputStream();
+}
+
+async function init() {
+    audioContext = new AudioContext();
+
+    outputMeter = new AudioStreamMeter("Output");
+    document.body.appendChild(outputMeter);
+
+    devices = await getMediaDevies();
+    handleOutputChange(devices[0]);
+
+    const select = createOutputDeviceSelect(devices);
+    document.body.appendChild(select);
+    select.onchange = e => {
+        const device = getDeviceByLabel(select.value);
+        handleOutputChange(device);
+    }
+}
 
 async function createWirelessMicClient() {
     return new Promise(async (resolve, reject) => {
@@ -65,11 +160,7 @@ function createRecieverClient(remoteOffer) {
         }
         rc.onaddstream = e => {
             console.log('Stream', e.stream);
-            const vid = document.createElement('video');
-            vid.srcObject = e.stream;
-            const audioMeter = new AudioStreamMeter("Remote Microphone");
-            audioMeter.setSourceStream(e.stream);
-            document.body.appendChild(audioMeter);
+            handleRemoteStream(e.stream);
         }
         rc.setRemoteDescription(remoteOffer).then(e => {
             console.log('Offset accetped.');
@@ -171,6 +262,8 @@ const btn = document.createElement('button');
 btn.innerHTML = "Connect";
 btn.onclick = () => {
     btn.remove();
+
+    init();
 
     if(location.search == "?reciever") {
         reciever = true;
