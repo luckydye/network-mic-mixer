@@ -107,7 +107,7 @@ function connectToIce(socket, ice, answer) {
     }));
 }
 
-getSocketProtocol() {
+function getSocketProtocol() {
     return location.protocol[4] == "s" ? "wss" : "ws";
 }
 
