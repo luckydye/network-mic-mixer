@@ -3,14 +3,20 @@ import AudioStreamMeter from './AudioStreamMeter.js';
 let reciever = false;
 let streams = [];
 let audioContext = null;
+let inputDevices = [];
 let devices = [];
 let currentOutputDevice = null;
 let currentAudioDestination = null;
+let currentInputDevice = null;
 
 let outputMeter = null;
 
 function getDeviceByLabel(label) {
     return devices.find(dev => dev.label == label);
+}
+
+function getInputDeviceByLabel(label) {
+    return inputDevices.find(dev => dev.label == label);
 }
 
 async function getMediaDevies(deviceType = "audiooutput") {
@@ -49,7 +55,7 @@ async function updateOutputStream() {
     }
 }
 
-function createOutputDeviceSelect(devices) {
+function createDeviceSelect(devices) {
     const select = document.createElement('select');
     for(let device of devices) {
         const opt = document.createElement('option');
@@ -80,16 +86,34 @@ function handleOutputChange(device) {
     updateOutputStream();
 }
 
+function handleInputChange(device) {
+    currentInputDevice = device;
+    console.log('Input device selected', device);
+}
+
 async function init() {
+    console.log('Initialize...');
     audioContext = new AudioContext();
 
     outputMeter = new AudioStreamMeter("Output");
     document.body.appendChild(outputMeter);
 
+    inputDevices = await getMediaDevies("audioinput");
+    console.log('Inputs', inputDevices);
+    const selectInput = createDeviceSelect(inputDevices);
+    document.body.appendChild(selectInput);
+    handleInputChange(inputDevices[0]);
+
+    selectInput.onchange = e => {
+        const device = getInputDeviceByLabel(selectInput.value);
+        handleInputChange(device);
+    }
+
     devices = await getMediaDevies();
+    console.log('Outputs', devices);
     handleOutputChange(devices[0]);
 
-    const select = createOutputDeviceSelect(devices);
+    const select = createDeviceSelect(devices);
     document.body.appendChild(select);
     select.onchange = e => {
         const device = getDeviceByLabel(select.value);
@@ -101,12 +125,15 @@ async function createWirelessMicClient() {
     return new Promise(async (resolve, reject) => {
         const mic = await navigator.mediaDevices.getUserMedia({
             audio: {
+                deviceId: currentInputDevice.deviceId,
                 sampleSize: 24,
                 sampleRate: 48000,
                 noiseSuppression: false,
                 autoGainControl: false,
                 echoCancellation: false
             }
+        }).catch(err => {
+            alert('Error getting input device stream');
         });
 
         console.log('Input Stream', mic);
@@ -268,19 +295,20 @@ function connectSocket(reciever = true) {
     }
 }
 
-const btn = document.createElement('button');
-btn.innerHTML = "Connect";
-btn.onclick = () => {
-    btn.remove();
-
-    init();
-
-    if(location.search == "?reciever") {
-        reciever = true;
-        connectSocket();
-    } else if(location.search == "?sender") {
-        reciever = false;
-        connectSocket(false);
+init().finally(e => {
+    const btn = document.createElement('button');
+    btn.innerHTML = "Connect";
+    btn.style.display = "block";
+    btn.onclick = () => {
+        btn.remove();
+    
+        if(location.search == "?reciever") {
+            reciever = true;
+            connectSocket();
+        } else if(location.search == "?sender") {
+            reciever = false;
+            connectSocket(false);
+        }
     }
-}
-document.body.append(btn);
+    document.body.append(btn);
+})
