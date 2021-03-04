@@ -8,9 +8,19 @@
 
     <style>
 
+        :root {
+            --bg-color: #1c1c1c;
+            --fg-color: #eee;
+        }
+
+        [sender] {
+            --bg-color: #4c584c;
+            --fg-color: #222522;
+        }
+
         body {
-            background: #1c1c1c;
-            color: #eee;
+            background: var(--bg-color);
+            color: var(--fg-color);
             font-family: 'Lato', sans-serif;
         }
 
@@ -33,10 +43,8 @@
 
         audio-stream-meter {
             margin: 15px 0;
-            background: #0c0c0c;
             padding: 10px;
-            border: 1px solid #313131;
-            border-bottom-color: #212121;
+            border: 2px solid var(--fg-color);
             border-radius: 3px;
         }
 

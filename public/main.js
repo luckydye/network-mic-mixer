@@ -298,6 +298,10 @@ function connectSocket(reciever = true) {
 }
 
 window.addEventListener('init', e => {
+    if(location.search == "?sender") {
+        document.body.setAttribute('sender', '');
+    }
+
     init().finally(e => {
         const btn = document.createElement('button');
         btn.innerHTML = "Connect";
