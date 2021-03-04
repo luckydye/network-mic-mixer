@@ -2,6 +2,20 @@ import { html, LitElement } from 'https://cdn.pika.dev/lit-element';
 
 let audioContext = null;
 
+function splitAudioSourceChannels(source) {
+    const splitter = audioContext.createChannelSplitter(source.channelCount);
+    source.connect(splitter);
+
+    const outputs = [];
+    for(let i = 0; i < splitter.channelCount; i++) {
+        const gain = audioContext.createGain();
+        splitter.connect(gain, i);
+        outputs[i] = gain;
+    }
+
+    return outputs;
+}
+
 export default class AudioStreamMeter extends LitElement {
 
     constructor(name) {
@@ -14,7 +28,7 @@ export default class AudioStreamMeter extends LitElement {
         }
 
         this.analyser = audioContext.createAnalyser();
-        this.analyser.fftSize = 256;
+        this.analyser.fftSize = 128;
         this.analyser.maxDecibels = 6;
         this.analyser.minDecibels = -60;
         this.analyser.smoothingTimeConstant = 0;
@@ -30,6 +44,8 @@ export default class AudioStreamMeter extends LitElement {
         this.peak = 0;
         this.history = [];
 
+        this.channels = [];
+
         const updateAudioMeter = () => {
             this.evaluate();
             this.renderAudioMeter();
@@ -40,7 +56,20 @@ export default class AudioStreamMeter extends LitElement {
 
     setSourceStream(stream) {
         const audioSource = audioContext.createMediaStreamSource(stream);
-        this.setAudioSourceNode(audioSource);
+
+        this.channels = [];
+
+        if(audioSource.channelCount > 1) {
+            const channels = splitAudioSourceChannels(audioSource);
+            
+            for(let channel of channels) {
+                const meter2 = new AudioStreamMeter();
+                meter2.setAudioSourceNode(channel);
+                this.channels.push(meter2);
+            }
+        } else {
+            this.setAudioSourceNode(audioSource);
+        }
     }
 
     setAudioSourceNode(audioSourceNode) {
@@ -67,7 +96,7 @@ export default class AudioStreamMeter extends LitElement {
         this.target = avrg;
 
         if(Number.isFinite(this.target)) {
-            this.value += (this.target - this.value) * 0.1;
+            this.value += (this.target - this.value) * 0.0033;
         }
 
         this.history.push(this.target);
@@ -105,13 +134,27 @@ export default class AudioStreamMeter extends LitElement {
     render() {
         return html`
             <style>
+                :host {
+                    display: block;
+                }
+                .name {
+                    margin-bottom: 10px;
+                }
                 canvas {
                     background: #191919;
                     image-rendering: pixelated;
+                    width: 100%;
+                    display: block;
+                    margin-bottom: 1px;
                 }
             </style>
-            <div>${this.name}</div>
-            <div>${this.canvas}</div>
+            ${this.name ? html`
+                <div class="name">${this.name}</div>
+            ` : ""}
+            ${this.channels.length > 0 ? 
+                html`<div>${this.channels}</div>` : 
+                html`<div>${this.canvas}</div>`
+            }
         `;
     }
 

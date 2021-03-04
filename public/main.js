@@ -99,7 +99,17 @@ async function init() {
 
 async function createWirelessMicClient() {
     return new Promise(async (resolve, reject) => {
-        const mic = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mic = await navigator.mediaDevices.getUserMedia({
+            audio: {
+                sampleSize: 24,
+                sampleRate: 48000,
+                noiseSuppression: false,
+                autoGainControl: false,
+                echoCancellation: false
+            }
+        });
+
+        console.log('Input Stream', mic);
 
         const lc = new RTCPeerConnection();
         const dc = lc.createDataChannel("channel");
