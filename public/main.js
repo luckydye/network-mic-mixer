@@ -297,20 +297,22 @@ function connectSocket(reciever = true) {
     }
 }
 
-init().finally(e => {
-    const btn = document.createElement('button');
-    btn.innerHTML = "Connect";
-    btn.style.display = "block";
-    btn.onclick = () => {
-        btn.remove();
-    
-        if(location.search == "?reciever") {
-            reciever = true;
-            connectSocket();
-        } else if(location.search == "?sender") {
-            reciever = false;
-            connectSocket(false);
+window.addEventListener('init', e => {
+    init().finally(e => {
+        const btn = document.createElement('button');
+        btn.innerHTML = "Connect";
+        btn.style.display = "block";
+        btn.onclick = () => {
+            btn.remove();
+        
+            if(location.search == "?reciever") {
+                reciever = true;
+                connectSocket();
+            } else if(location.search == "?sender") {
+                reciever = false;
+                connectSocket(false);
+            }
         }
-    }
-    document.body.append(btn);
+        document.body.append(btn);
+    })
 })
