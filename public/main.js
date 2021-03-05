@@ -68,6 +68,8 @@ async function updateOutputStreams() {
     
     for(let channel of channels) {
         const audioOutput = channel.getOutput();
+        // Instead to connecting it directly to the output detination
+        //  connect it ti a ouptut channel processor for more control overt the master.
         audioOutput.connect(currentAudioDestination);
     }
 }
@@ -334,6 +336,6 @@ window.addEventListener('init', e => {
                 connectSocket(false);
             }
         }
-        document.body.append(btn);
+        document.querySelector('main').append(btn);
     })
 })
