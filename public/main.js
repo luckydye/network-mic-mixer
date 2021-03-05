@@ -1,13 +1,15 @@
 import AudioStreamMeter from './AudioStreamMeter.js';
+import ChannelProcessor from './ChannelProcessor.js';
+import Knob from './gyro/Knob.js';
 
 let reciever = false;
-let streams = [];
 let audioContext = null;
 let inputDevices = [];
 let devices = [];
 let currentOutputDevice = null;
 let currentAudioDestination = null;
 let currentInputDevice = null;
+let channels = [];
 
 let outputMeter = null;
 
@@ -36,22 +38,37 @@ async function getMediaDevies(deviceType = "audiooutput") {
 function handleRemoteStream(stream) {
     const vid = document.createElement('video');
     vid.srcObject = stream;
-    const audioMeter = new AudioStreamMeter("Remote Microphone");
-    audioMeter.setSourceStream(stream);
-    document.body.appendChild(audioMeter);
-    streams.push(stream);
 
-    updateOutputStream();
+    const channel = new ChannelProcessor(audioContext, {
+        stream: stream
+    });
+    channels.push(channel);
+
+    const channelDiv = document.createElement("div");
+    channelDiv.classList.add('channel');
+
+    const audioMeter = new AudioStreamMeter(audioContext, "Remote Microphone");
+    audioMeter.setAudioSourceNode(channel.getOutput());
+    channelDiv.appendChild(audioMeter);
+
+    const gainKnob = new Knob();
+    gainKnob.value = channel.getVolume() * 100;
+    channelDiv.appendChild(gainKnob);
+    gainKnob.onchange = e => {
+        channel.setVolume(gainKnob.value / 100);
+    }
+
+    document.querySelector('.input-channels').appendChild(channelDiv);
+
+    updateOutputStreams();
 }
 
-async function updateOutputStream() {
+async function updateOutputStreams() {
     devices = await getMediaDevies();
     
-    for(let stream of streams) {
-        const audioSource = audioContext.createMediaStreamSource(stream);
-        console.log('Source', audioSource);
-        console.log('Dest', currentAudioDestination);
-        audioSource.connect(currentAudioDestination);
+    for(let channel of channels) {
+        const audioOutput = channel.getOutput();
+        audioOutput.connect(currentAudioDestination);
     }
 }
 
@@ -85,7 +102,7 @@ function handleOutputChange(device) {
 
     console.log('Device selected', device);
 
-    updateOutputStream();
+    updateOutputStreams();
 }
 
 function handleInputChange(device) {
@@ -97,13 +114,13 @@ async function init() {
     console.log('Initialize...');
     audioContext = new AudioContext();
 
-    outputMeter = new AudioStreamMeter("Output");
-    document.body.appendChild(outputMeter);
+    outputMeter = new AudioStreamMeter(audioContext, "Output");
+    document.querySelector('.output-channels').appendChild(outputMeter);
 
     inputDevices = await getMediaDevies("audioinput");
     console.log('Inputs', inputDevices);
     const selectInput = createDeviceSelect(inputDevices);
-    document.body.appendChild(selectInput);
+    document.querySelector('.input-selector').appendChild(selectInput);
     handleInputChange(inputDevices[0]);
 
     selectInput.onchange = e => {
@@ -116,7 +133,7 @@ async function init() {
     handleOutputChange(devices[0]);
 
     const select = createDeviceSelect(devices);
-    document.body.appendChild(select);
+    document.querySelector('.output-selector').appendChild(select);
     select.onchange = e => {
         const device = getDeviceByLabel(select.value);
         handleOutputChange(device);
@@ -152,11 +169,11 @@ async function createWirelessMicClient() {
             console.log('Connected to peer');
         }
 
-        const micMeter = new AudioStreamMeter("Microphone");
+        const micMeter = new AudioStreamMeter(audioContext, "Microphone");
         micMeter.setSourceStream(mic);
         const vid = document.createElement('video');
         vid.srcObject = mic;
-        document.body.appendChild(micMeter);
+        document.querySelector('.input-channels').appendChild(micMeter);
 
         let lastIce = null;
         lc.onicecandidate = e => {

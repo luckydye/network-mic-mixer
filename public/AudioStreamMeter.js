@@ -1,14 +1,13 @@
 import { html, LitElement } from 'https://cdn.pika.dev/lit-element';
 
-let audioContext = null;
-
-function splitAudioSourceChannels(source) {
+function splitAudioSourceChannels(audioContext, source) {
     const splitter = audioContext.createChannelSplitter(source.channelCount);
     source.connect(splitter);
 
     const outputs = [];
     for(let i = 0; i < splitter.channelCount; i++) {
         const gain = audioContext.createGain();
+        gain.out = true;
         splitter.connect(gain, i);
         outputs[i] = gain;
     }
@@ -18,16 +17,13 @@ function splitAudioSourceChannels(source) {
 
 export default class AudioStreamMeter extends LitElement {
 
-    constructor(name) {
+    constructor(context, name) {
         super();
-        
+
         this.name = name;
+        this.audioContext = context;
 
-        if(!audioContext) {
-            audioContext = new AudioContext();
-        }
-
-        this.analyser = audioContext.createAnalyser();
+        this.analyser = this.audioContext.createAnalyser();
         this.analyser.fftSize = 128;
         this.analyser.maxDecibels = 6;
         this.analyser.minDecibels = -60;
@@ -55,27 +51,27 @@ export default class AudioStreamMeter extends LitElement {
     }
 
     setSourceStream(stream) {
-        const audioSource = audioContext.createMediaStreamSource(stream);
+        const audioSource = this.audioContext.createMediaStreamSource(stream);
+        this.setAudioSourceNode(audioSource);
+    }
 
+    setAudioSourceNode(audioSourceNode) {
         this.channels = [];
 
-        if(audioSource.channelCount > 1) {
-            const channels = splitAudioSourceChannels(audioSource);
+        if(audioSourceNode.channelCount > 1 && !audioSourceNode.out) {
+            const channels = splitAudioSourceChannels(this.audioContext, audioSourceNode);
             
             for(let channel of channels) {
-                const meter2 = new AudioStreamMeter();
+                console.log('CHANNEL', channel);
+                const meter2 = new AudioStreamMeter(this.audioContext);
                 meter2.setAudioSourceNode(channel);
                 this.channels.push(meter2);
             }
         } else {
-            this.setAudioSourceNode(audioSource);
+            this.audioSource = audioSourceNode;
+            this.audioSource.connect(this.analyser);
+            this.evaluate();
         }
-    }
-
-    setAudioSourceNode(audioSourceNode) {
-        this.audioSource = audioSourceNode;
-        this.audioSource.connect(this.analyser);
-        this.evaluate();
     }
 
     setAudioSourceFromTrack(audioTrack) {
@@ -141,13 +137,12 @@ export default class AudioStreamMeter extends LitElement {
                     margin-bottom: 10px;
                 }
                 canvas {
-                    border-radius: 1px;
-                    border: 2px solid var(--fg-color);
                     image-rendering: pixelated;
                     width: 100%;
                     height: 4px;
                     display: block;
-                    margin-bottom: 0;
+                    margin-bottom: 1px;
+                    background: rgba(0, 0, 0, 0.25);
                 }
             </style>
             ${this.name ? html`

@@ -41,11 +41,40 @@
             background: #36363a;
         }
 
-        audio-stream-meter {
-            margin: 15px 0;
+        select {
+            width: 200px;
+            text-overflow: ellipsis;
+            margin-right: 10px;
+        }
+
+        .header {
+            display: flex;
+        }
+
+        .input-channels {
+            margin: 20px 0;
+        }
+
+        .channel {
+            margin: 5px 0;
             padding: 10px;
-            border: 2px solid var(--fg-color);
+            background: #333;
             border-radius: 3px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-gap: 20px;
+        }
+
+        main {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
     </style>
@@ -53,5 +82,24 @@
 <body>
     <script type="module" src="main.js"></script>
     <button onclick="window.dispatchEvent(new Event('init')); this.remove()">Setup</button>
+
+    <main>
+        <div class="header">
+            <div class="input-selector">
+                <div>Input</div>
+    
+            </div>
+            <div class="output-selector">
+                <div>Output</div>
+        
+            </div>
+        </div>
+        <div class="input-channels">
+    
+        </div>
+        <div class="output-channels">
+            
+        </div>
+    </main>
 </body>
 </html>
