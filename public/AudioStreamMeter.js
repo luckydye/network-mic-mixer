@@ -1,4 +1,4 @@
-import { html, LitElement } from 'https://cdn.pika.dev/lit-element';
+import { html, LitElement } from 'https://cdn.skypack.dev/lit-element@2.4.0';
 
 function splitAudioSourceChannels(audioContext, source) {
     const splitter = audioContext.createChannelSplitter(source.channelCount);
