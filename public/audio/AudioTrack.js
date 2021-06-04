@@ -1,4 +1,4 @@
-import Timer from "../Timer.js";
+import Timer from "./Timer.js";
 import AudioChannel from "./AudioChannel.js";
 import { AudioRecorder } from "./AudioRecorder.js";
 import AudioSource from "./AudioSource.js";
@@ -88,7 +88,10 @@ export class AudioTrack {
         })
 
         this.audioComposer = new AudioWorkletNode(this.context, 'audio-composer');
-        this.outputChannel.setInput(this.audioComposer);
+        // this.outputChannel.setInput(this.audioComposer);
+
+        // bypass composer for live playback
+        this.outputChannel.setInput(this.audioSource);
 
         this.audioComposer.port.onmessage = msg => {
             window.portmsg = msg.data;

@@ -11,19 +11,28 @@ async function main() {
     const server = http.Server(app);
     const io = new IoServer(server);
 
-    let senders = [];
+    const senders = new Set();
 
     const requests = {};
 
     io.on("connection", (socket) => {
-        console.log("socket connected");
+        socket.on('disconnect', e => {
+            if(senders.has(socket)) {
+                senders.delete(socket);
+                console.log('sneder diconnected');
+            }
+        });
 
         socket.on("message", (type, data) => {
             switch(type) {
                 case 'requestPreview':
                     const reqid = uuidv4();
-                    requests[reqid] = description => {
-                        socket.send('previewOffer', { description, id: reqid });
+                    requests[reqid] = reqData => {
+                        socket.send('previewOffer', { 
+                            clientId: reqData.clientId,
+                            description: reqData.description,
+                            id: reqid
+                        });
                     }
                     for(let sender of senders) {
                         sender.send('createOffer', { id: reqid });
@@ -31,7 +40,7 @@ async function main() {
                     break;
                 case 'offer':
                     if(requests[data.id]) {
-                        requests[data.id](data.description);
+                        requests[data.id](data);
                     }
                     break;
                 case 'answer':
@@ -40,7 +49,7 @@ async function main() {
                     }
                     break;
                 case 'boradcast':
-                    senders.push(socket);
+                    senders.add(socket);
                     console.log("sneder connected");
                     break;
             }
@@ -48,9 +57,6 @@ async function main() {
     });
 
     app.use('/', express.static(path.resolve('./public')));
-    app.use('/', (req, res) => {
-        res.sendFile(path.resolve('./public/index.html'));
-    });
 
     console.log('App listening on ' + PORT);
     server.listen(PORT);

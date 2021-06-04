@@ -77,8 +77,8 @@ async function createRTCOffer(stream) {
 
 const offers = {};
 
-function connectToSocket(stream) {
-    const socket = io(location.href);
+function connectToSocket(stream, clientId) {
+    const socket = io(location.origin);
     socket.send('boradcast', { test: true });
 
     socket.on('message', async (type, msg) => {
@@ -91,7 +91,8 @@ function connectToSocket(stream) {
                 const offer = await createRTCOffer(stream);
                 const data = {
                     id: msg.id,
-                    description: offer.localDescription
+                    description: offer.localDescription,
+                    clientId: clientId,
                 }
                 offers[msg.id] = offer;
                 socket.send('offer', data);
@@ -143,6 +144,6 @@ async function init() {
         }
     })
     connectBtn.addEventListener('click', e => {
-        connectToSocket(outputStream);
+        connectToSocket(outputStream, clientId);
     })
 }

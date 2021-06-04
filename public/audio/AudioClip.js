@@ -1,4 +1,4 @@
-import { dragElement } from "../util.js";
+// import { dragElement } from "../util.js";
 
 export class AudioClip {
 
@@ -23,25 +23,25 @@ export class AudioClip {
         const ctxt = canvas.getContext("2d");
         canvas.ctxt = ctxt;
 
-        dragElement(canvas, data => {
-            if(Math.abs(data.absolute[0]) > 2) {
-                const newStartTime = this.startTime + (data.delta[0] / 100);
-                if(newStartTime >= 0) {
-                    this.startTime = newStartTime; 
-                }
+        // dragElement(canvas, data => {
+        //     if(Math.abs(data.absolute[0]) > 2) {
+        //         const newStartTime = this.startTime + (data.delta[0] / 100);
+        //         if(newStartTime >= 0) {
+        //             this.startTime = newStartTime; 
+        //         }
 
-                if(!canvas.hasAttribute('dragging')) {
-                    canvas.setAttribute('dragging', '');
-                }
-            }
+        //         if(!canvas.hasAttribute('dragging')) {
+        //             canvas.setAttribute('dragging', '');
+        //         }
+        //     }
 
-            if(data.mouseup) {
-                canvas.removeAttribute('dragging');
-            }
+        //     if(data.mouseup) {
+        //         canvas.removeAttribute('dragging');
+        //     }
 
-            canvas.style.setProperty('--startTime', this.startTime);
-            canvas.style.setProperty('--length', this.length);
-        })
+        //     canvas.style.setProperty('--startTime', this.startTime);
+        //     canvas.style.setProperty('--length', this.length);
+        // })
 
         const draw = () => {
             const dataLength = sampleRate * duration;
