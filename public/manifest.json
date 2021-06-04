@@ -3,7 +3,7 @@
     "short_name": "RTC Radio",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#1c1c1c",
+    "background_color": "#eee",
     "description": "RTC Radio app.",
     "icons": [
         {

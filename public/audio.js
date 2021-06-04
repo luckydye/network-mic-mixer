@@ -54,24 +54,6 @@ function createControlKnob(source) {
     return knob;
 }
 
-const tracks = [
-    {
-        name: 'Track 1',
-        inputDevice: 'f4e4dffa447be44f7557a78785415c2061d06c99472a1a1dfe8b128faed078d3',
-        armed: true,
-    },
-    {
-        name: 'Track 2',
-        inputDevice: '157bb2c4c2fa454a88354d046bfc2808b573f57733f94df7352b371d3b91fa87',
-        armed: true,
-    },
-    {
-        name: 'Track 3',
-        inputDevice: '157bb2c4c2fa454a88354d046bfc2808b573f57733f94df7352b371d3b91fa87',
-        armed: false,
-    }
-]
-
 function loadMixerTracks(audioContext, mixer, jsonTracks) {
     for(let jsonTrack of jsonTracks) {
         const track1 = new AudioTrack(audioContext);

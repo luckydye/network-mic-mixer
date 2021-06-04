@@ -34,11 +34,11 @@ export default class AudioStreamMeterVertecal extends AudioStreamMeter {
             this.context.fillStyle = "#1a8e1a";
             this.context.fillRect(x, this.canvas.height, channelHeight, -this.target[channel]);
 
-            this.context.fillStyle = "#00ff00";
+            this.context.fillStyle = "#88ff88";
             this.context.fillRect(x, this.canvas.height, channelHeight, -this.value[channel]);
 
             if(this.levels[channel] < 0) {
-                this.context.fillStyle = "#00ff00";
+                this.context.fillStyle = "#88ff88";
             } else {
                 this.context.fillStyle = "red";
             }
@@ -61,7 +61,6 @@ export default class AudioStreamMeterVertecal extends AudioStreamMeter {
                     image-rendering: pixelated;
                     display: block;
                     margin-bottom: 1px;
-                    background: rgba(0, 0, 0, 0.25);
                     height: 100%;
                     width: 100%;
                 }

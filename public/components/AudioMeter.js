@@ -15,6 +15,28 @@ function splitAudioSourceChannels(audioContext, source) {
     return outputs;
 }
 
+function readLevels(dataArray = []) {
+    const input = [ dataArray, dataArray ];
+    const channelCount = input.length;
+
+    const amplitudes = [];
+    const levels = [];
+
+    for(let channel = 0; channel < channelCount; channel++) {
+        let counter = 0;
+        const samples = input[channel];
+        for(let sample of samples) {
+            counter += sample;
+        }
+        amplitudes[channel] = Math.abs(counter / samples.length);
+
+        const dB = 20 * Math.log10(amplitudes[channel]);
+        levels[channel] = dB;
+    }
+
+    return levels;
+}
+
 export default class AudioStreamMeter extends LitElement {
 
     constructor(context, name) {
@@ -23,8 +45,8 @@ export default class AudioStreamMeter extends LitElement {
         this.name = name;
         this.audioContext = context;
 
-        this.meter = new AudioWorkletNode(this.audioContext, 'audio-db-meter');
-        this.levels = [0 , 0];
+        this.analyser = this.audioContext.createAnalyser();
+        this.levels = [0, 0];
 
         this.value = [];
         this.history = [];
@@ -32,16 +54,19 @@ export default class AudioStreamMeter extends LitElement {
         this.target = [];
         this.history = [];
 
-        this.meter.port.onmessage = msg => {
-            this.levels = msg.data;
-        }
-
         this.canvas = document.createElement('canvas');
         this.canvas.width = 150;
         this.canvas.height = 20;
         this.context = this.canvas.getContext("2d");
 
+        this.analyser.fftSize = 2048;
+        const dataArray = new Float32Array(this.analyser.frequencyBinCount);
+
         const updateAudioMeter = () => {
+            // read values
+            this.analyser.getFloatTimeDomainData(dataArray);
+            this.levels = readLevels(dataArray);
+
             this.renderAudioMeter();
             requestAnimationFrame(updateAudioMeter);
         }
@@ -55,7 +80,7 @@ export default class AudioStreamMeter extends LitElement {
 
     setAudioSourceNode(audioSourceNode) {
         this.audioSource = audioSourceNode;
-        this.audioSource.connect(this.meter);
+        this.audioSource.connect(this.analyser);
     }
 
     setAudioSourceFromTrack(audioTrack) {
