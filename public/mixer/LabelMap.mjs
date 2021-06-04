@@ -9,7 +9,7 @@ export default class LabelMap {
 
     static setLabel(id, label) {
         map[id] = label;
-
+        LabelMap.storeMap();
     }
 
     static getLabel(id) {

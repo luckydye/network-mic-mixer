@@ -99,7 +99,7 @@ function getMedia(callback) {
 }
 
 function monitorStream(stream, name, contianer) {
-    const meter = new AudioStreamMeter(audioContext, name);
+    const meter = new AudioStreamMeterVertecal(audioContext, name);
     meter.setSourceStream(stream);
     contianer.appendChild(meter);
 }
@@ -152,6 +152,7 @@ async function init() {
         let label = LabelMap.getLabel(clientId);
         if(!label) {
             label = "Input " + inputCounter;
+            LabelMap.setLabel(clientId, label);
         }
 
         handleNewInput(mixer, stream, label);
