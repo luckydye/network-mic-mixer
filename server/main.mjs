@@ -11,7 +11,7 @@ async function main() {
     const server = http.Server(app);
     const io = new IoServer(server);
 
-    let boradcaster = null;
+    let senders = [];
 
     const requests = {};
 
@@ -25,7 +25,9 @@ async function main() {
                     requests[reqid] = description => {
                         socket.send('previewOffer', { description, id: reqid });
                     }
-                    boradcaster.send('createOffer', { id: reqid });
+                    for(let sender of senders) {
+                        sender.send('createOffer', { id: reqid });
+                    }
                     break;
                 case 'offer':
                     if(requests[data.id]) {
@@ -33,11 +35,13 @@ async function main() {
                     }
                     break;
                 case 'answer':
-                    boradcaster.send('answer', data);
+                    for(let sender of senders) {
+                        sender.send('answer', data);
+                    }
                     break;
                 case 'boradcast':
-                    boradcaster = socket;
-                    console.log("got broadcast");
+                    senders.push(socket);
+                    console.log("sneder connected");
                     break;
             }
         });
