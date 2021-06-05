@@ -220,12 +220,16 @@ async function init() {
             name: dev.label,
             deviceId: dev.deviceId,
         };
-        audio.setSinkId(dev.deviceId);
+        if(audio.setSinkId) {
+            audio.setSinkId(dev.deviceId);
+        }
     }
 
     deviceDropdown.addEventListener('change', e => {
         console.log('Output to:', deviceDropdown.value.deviceId);
-        audio.setSinkId(deviceDropdown.value.deviceId);
+        if(audio.setSinkId) {
+            audio.setSinkId(deviceDropdown.value.deviceId);
+        }
         Preferences.set('output-device', deviceDropdown.value);
     });
 
