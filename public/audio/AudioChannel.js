@@ -10,10 +10,19 @@ export default class AudioChannel {
         this.compressor = audioContext.createDynamicsCompressor();
         this.analyser = audioContext.createAnalyser();
         this.filter = audioContext.createBiquadFilter();
+        this.delay = audioContext.createDelay(1);
 
         this.inputGain = this.gain.gain.value;
         this.input = null;
         this._muted = false;
+    }
+
+    setDelay(ms) {
+        this.delay.delayTime.setValueAtTime(ms / 1000, this.context.currentTime);
+    }
+
+    getDelay() {
+        return this.delay.delayTime.value;
     }
 
     get muted() {
@@ -40,11 +49,13 @@ export default class AudioChannel {
 
     setInput(source) {
         this.input = source;
-        this.input.connect(this.gain);
+        this.input.connect(this.delay);
+        this.delay.connect(this.gain);
     }
 
     clearInput() {
         this.input.disconnect();
+        this.delay.disconnect();
         this.input = null;
     }
 

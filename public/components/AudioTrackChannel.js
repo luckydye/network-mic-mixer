@@ -1,6 +1,7 @@
 import { html, LitElement, css } from 'https://cdn.skypack.dev/lit-element@2.4.0';
 import AudioStreamMeterVertecal from './AudioMeterVertical.js';
 import LabelMap from '../mixer/LabelMap.mjs';
+import FluidInput from './FluidInput.js';
 
 export default class AudioTrackChannel extends LitElement {
 
@@ -50,6 +51,10 @@ export default class AudioTrackChannel extends LitElement {
             .pan gyro-knob {
                 transform: scale(0.9);
             }
+
+            gyro-fluid-input2 {
+                font-size: 12px;
+            }
         `;
     }
 
@@ -69,6 +74,17 @@ export default class AudioTrackChannel extends LitElement {
 
         this.knob.addEventListener('change', e => {
             channel.setGain(this.knob.value);
+        })
+        
+        this.delayInput = new FluidInput();
+        this.delayInput.min = 0;
+        this.delayInput.max = 500;
+        this.delayInput.steps = 1;
+        this.delayInput.value = channel.getDelay();
+        this.delayInput.suffix = "ms";
+
+        this.delayInput.addEventListener('change', e => {
+            channel.setDelay(this.delayInput.value);
         })
     }
 
@@ -100,6 +116,7 @@ export default class AudioTrackChannel extends LitElement {
                 <div class="pan">
                     ${this.knob}
                 </div>
+                ${this.delayInput}
             </div>
         `;
     }
