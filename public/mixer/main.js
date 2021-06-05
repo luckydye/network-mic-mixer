@@ -134,6 +134,16 @@ function handleNewInput(mixer, stream, label) {
 
 async function init() {
 
+    const qr = new QRious({
+        element: document.createElement('canvas'),
+        value: location.origin + "/sender" + location.search,
+        mime: 'text/uri-list',
+        background: '#1c1c1c',
+        foreground: '#333'
+    })
+    document.querySelector('.mixerOuter').appendChild(qr._element);
+    qr._element.className = "qr-code";
+
     console.log('loading...');
     
     // audio setup
