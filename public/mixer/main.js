@@ -174,7 +174,7 @@ async function init() {
     const masterStream = masterChannel.getOutputStream();
     const masterNode = masterChannel.getOutputNode();
     monitorStream(masterStream, document.querySelector('.fader'));
-
+    
     const audio = new Audio();
     audio.srcObject = masterStream;
     audio.play();
@@ -237,9 +237,7 @@ async function init() {
 }
 
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js', {
-        sopce: '/images/'
-    }).then(registration => {
+    navigator.serviceWorker.register('../sw.js').then(registration => {
         // Registration was successful
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
     }, function (err) {
