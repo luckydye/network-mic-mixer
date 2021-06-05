@@ -1,5 +1,6 @@
 import { html, LitElement, css } from 'https://cdn.skypack.dev/lit-element@2.4.0';
 import AudioStreamMeterVertecal from './AudioMeterVertical.js';
+import LabelMap from '../mixer/LabelMap.mjs';
 
 export default class AudioTrackChannel extends LitElement {
 
@@ -7,6 +8,7 @@ export default class AudioTrackChannel extends LitElement {
         return css`
             :host {
                 background: rgb(39, 39, 39);
+                border: 1px solid #2d2d2d;
                 min-width: 80px;
                 display: grid;
                 grid-template-rows: auto 1fr;
@@ -18,18 +20,28 @@ export default class AudioTrackChannel extends LitElement {
                 padding: 6px 6px;
                 box-sizing: border-box;
                 background: #333333;
+                user-select: none;
             }
             .container {
-                padding: 4px;
+                grid-gap: 15px;
+                padding: 0 5px 10px 5px;
                 display: grid;
-                grid-template-rows: 1fr auto;
+                grid-template-rows: 10px 1fr 70px;
             }
             .return-send {
                 padding: 4px;
             }
             .level-meter {
                 display: grid;
-                grid-template-columns: 1fr auto;
+                grid-template-columns: 1fr auto auto 1fr;
+            }
+            .level-meter vertical-slider {
+                grid-column: 2;
+            }
+            .level-meter audio-meter-vertical {
+                grid-column: 3;
+                width: 10px;
+                background: #1b1b1b;
             }
             .pan {
                 display: flex;
@@ -37,9 +49,6 @@ export default class AudioTrackChannel extends LitElement {
             }
             .pan gyro-knob {
                 transform: scale(0.9);
-            }
-            audio-meter-vertical {
-                width: 10px;
             }
         `;
     }
@@ -50,20 +59,46 @@ export default class AudioTrackChannel extends LitElement {
         this.track = audioTrack;
         this.meter = new AudioStreamMeterVertecal(this.track.context);
         this.meter.setAudioSourceNode(this.track.getInputNode());
+
+        const channel = this.track.channel;
+        this.knob = document.createElement('gyro-knob');
+        this.knob.value = channel.getGain();
+        this.knob.steps = 0.01;
+        this.knob.min = 0;
+        this.knob.max = 10;
+
+        this.knob.addEventListener('change', e => {
+            channel.setGain(this.knob.value);
+        })
     }
 
     render() {
+        const clientId = this.track.name;
+        let label = LabelMap.getLabel(clientId);
+        if(!label) {
+            label = "Untitled Input";
+            LabelMap.setLabel(clientId, label);
+        }
+
+        const changeName = () => {
+            const newLabel = prompt('New Name:');
+            LabelMap.setLabel(clientId, newLabel);
+            this.update();
+        }
+        
         return html`
-            <div class="label">
-                <span>${this.track.name}</span>
+            <div class="label" @dblclick="${e => { changeName() }}">
+                <span>${label}</span>
             </div>
             <div class="container">
+                <div class="header">
+                </div>
                 <div class="level-meter">
                     <vertical-slider></vertical-slider>
                     ${this.meter}
                 </div>
                 <div class="pan">
-                    <gyro-knob min="-1" max="1" value="0" steps="0.1"></gyro-knob>
+                    ${this.knob}
                 </div>
             </div>
         `;

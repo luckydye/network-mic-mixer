@@ -91,7 +91,7 @@ export class AudioTrack {
         // this.outputChannel.setInput(this.audioComposer);
 
         // bypass composer for live playback
-        this.outputChannel.setInput(this.audioSource);
+        this.outputChannel.setInput(this.channel.getOutputNode());
 
         this.audioComposer.port.onmessage = msg => {
             window.portmsg = msg.data;

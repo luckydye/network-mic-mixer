@@ -21,6 +21,7 @@ export default class DropdownButton extends HTMLElement {
 					font-family: sans-serif;
 					font-size: 12px;
 					text-transform: capitalize;
+					user-select: none;
 				}
 
 				:host(:focus) {
@@ -63,6 +64,7 @@ export default class DropdownButton extends HTMLElement {
 					min-width: 100%;
 					width: max-content;
 					animation: hide .06s ease-out both;
+					transform: translate(calc(var(--offsetX) * -1px), 0);
 				}
 
 				.options span {
@@ -183,9 +185,19 @@ export default class DropdownButton extends HTMLElement {
 
 	connectedCallback() {
 		this.tabIndex = 0;
+		this.optionsOffset = 0;
 
 		this.addEventListener('focus', e => {
 			this.setAttribute('active', '');
+
+			const optionsElement = this.shadowRoot.querySelector('.options');
+			const bounds = optionsElement.getClientRects()[0];
+			if(bounds) {
+				const rightEnd = bounds.width + bounds.x;
+				const delta = (window.innerWidth - rightEnd) - this.optionsOffset;
+				this.optionsOffset = -delta;
+				optionsElement.style.setProperty('--offsetX', this.optionsOffset);
+			}
 		});
 
 		this.addEventListener('blur', e => {

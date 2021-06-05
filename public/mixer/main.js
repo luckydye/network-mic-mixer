@@ -12,7 +12,7 @@ import LabelMap from './LabelMap.mjs';
 
 const audioContext = new AudioContext();
 
-window.addEventListener('load', e => {
+window.addEventListener('DOMContentLoaded', e => {
     init();
 });
 
@@ -98,8 +98,8 @@ function getMedia(callback) {
     return video;
 }
 
-function monitorStream(stream, name, contianer) {
-    const meter = new AudioStreamMeterVertecal(audioContext, name);
+function monitorStream(stream, contianer) {
+    const meter = new AudioStreamMeterVertecal(audioContext);
     meter.setSourceStream(stream);
     contianer.appendChild(meter);
 }
@@ -158,14 +158,7 @@ async function init() {
 
     getMedia((stream, clientId) => {
         inputCounter++;
-
-        let label = LabelMap.getLabel(clientId);
-        if(!label) {
-            label = "Input " + inputCounter;
-            LabelMap.setLabel(clientId, label);
-        }
-
-        handleNewInput(mixer, stream, label);
+        handleNewInput(mixer, stream, clientId);
     });
 
     const mixOutNode = mixer.getOutputNode(audioContext);
@@ -180,7 +173,7 @@ async function init() {
     // monitor
     const masterStream = masterChannel.getOutputStream();
     const masterNode = masterChannel.getOutputNode();
-    monitorStream(masterStream, "Output", headerElement);
+    monitorStream(masterStream, document.querySelector('.fader'));
 
     const audio = new Audio();
     audio.srcObject = masterStream;
@@ -237,4 +230,16 @@ async function init() {
     });
 
     controlsElement.appendChild(deviceDropdown);
+}
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js', {
+        sopce: '/images/'
+    }).then(registration => {
+        // Registration was successful
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function (err) {
+        // registration failed :(
+        console.log('ServiceWorker registration failed: ', err);
+    });
 }
