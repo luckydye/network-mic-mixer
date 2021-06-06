@@ -114,23 +114,23 @@
         }
 
         .fader {
-            grid-gap: 10px;
-            grid-row: 2;
-            display: flex;
-            justify-content: space-between;
+            grid-gap: 15px;
+            display: grid;
+            justify-content: center;
+            grid-template-columns: 1fr auto auto 1fr;
             width: 40px;
             height: 100%;
             box-sizing: border-box;
         }
-        .fader input {
+        .fader level-slider {
             height: 100%;
             margin: 0;
+            grid-column: 2;
         }
         .fader audio-meter-vertical {
+            grid-column: 3;
             height: 100%;
             background: #1b1b1b;
-            flex: none;
-            grid-row: 2;
             width: 10px;
         }
 
@@ -154,7 +154,7 @@
                     <div id="controlsElement"></div>
                 </div>
                 <div class="fader">
-                    <input type="range" orient="vertical" min="0" max="1" step="0.01"/>
+                    <level-slider class="master" min="0" max="100" steps="0.1" value="10"></level-slider>
                 </div>
             </div>
         </div>

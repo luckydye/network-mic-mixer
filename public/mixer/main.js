@@ -8,6 +8,7 @@ import AudioStreamMeter from '../components/AudioMeter.js';
 import AudioStreamMeterVertecal from "../components/AudioMeterVertical.js";
 import AudioTrackChannel from '../components/AudioTrackChannel.js';
 import DropdownButton from '../components/DropdownButton.js';
+import LevelSlider from '../components/LevelSlider.js';
 import LabelMap from './LabelMap.mjs';
 
 const audioContext = new AudioContext();
@@ -169,6 +170,14 @@ async function init() {
 
     const knob = createControlKnob(masterChannel);
     headerElement.appendChild(knob);
+
+    const levelSlider = document.querySelector('level-slider.master');
+
+    levelSlider.setValue(masterChannel.getGain());
+    levelSlider.addEventListener('change', e => {
+        masterChannel.setGain(levelSlider.value / 5);
+        knob.setValue(levelSlider.value / 5);
+    })
 
     // monitor
     const masterStream = masterChannel.getOutputStream();

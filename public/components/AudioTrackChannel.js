@@ -35,6 +35,7 @@ export default class AudioTrackChannel extends LitElement {
             .level-meter {
                 display: grid;
                 grid-template-columns: 1fr auto auto 1fr;
+                grid-gap: 20px;
             }
             .level-meter vertical-slider {
                 grid-column: 2;
@@ -55,6 +56,11 @@ export default class AudioTrackChannel extends LitElement {
             gyro-fluid-input2 {
                 font-size: 12px;
             }
+
+            level-slider {
+                height: 100%;
+                grid-column: 2;
+            }
         `;
     }
 
@@ -74,6 +80,17 @@ export default class AudioTrackChannel extends LitElement {
 
         this.knob.addEventListener('change', e => {
             channel.setGain(this.knob.value);
+        })
+
+        this.slider = document.createElement('level-slider');
+        this.slider.value = channel.getGain();
+        this.slider.steps = 0.01;
+        this.slider.min = 0;
+        this.slider.max = 10;
+
+        this.slider.addEventListener('change', e => {
+            this.knob.setValue(channel.getGain());
+            channel.setGain(this.slider.value);
         })
         
         this.delayInput = new FluidInput();
@@ -110,7 +127,7 @@ export default class AudioTrackChannel extends LitElement {
                 <div class="header">
                 </div>
                 <div class="level-meter">
-                    <vertical-slider></vertical-slider>
+                    ${this.slider}
                     ${this.meter}
                 </div>
                 <div class="pan">
