@@ -25,7 +25,7 @@ export default class DropdownButton extends HTMLElement {
 				}
 
 				:host(:focus) {
-					background: rgba(52, 52, 52, 0.75);
+					background: rgb(82 82 82 / 75%);
 				}
 
 				:host {
@@ -36,11 +36,11 @@ export default class DropdownButton extends HTMLElement {
 					min-width: 100px;
 					border-radius: 4px;
 					box-sizing: content-box;
-					background: rgba(15, 15, 15, 0.5);
+					background: rgb(35 35 35 / 50%);
 				}
 
 				:host(:hover) {
-					background: rgba(52, 52, 52, 0.75);
+					background: rgb(82 82 82 / 75%);
 				}
 
 				:host([active]) {

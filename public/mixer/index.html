@@ -18,8 +18,8 @@
 
     <style>
         :root {
-            --bg-color: #1c1c1c;
-            --fg-color: #eee;
+            --bg-color: #2b2b2b;
+            --fg-color: #cecece;
         }
 
         body {
@@ -53,6 +53,7 @@
 
         .mixer {
             display: grid;
+            grid-gap: 2px;
             grid-auto-flow: column;
             grid-auto-columns: 100px;
             justify-content: flex-start;
@@ -63,13 +64,12 @@
             width: 120px;
             display: grid;
             grid-template-rows: 70px 1fr 70px;
-            padding: 0 5px 10px 5px;
             align-items: center;
             justify-content: center;
             justify-items: center;
-            background: rgb(39, 39, 39);
-            border: 1px solid #2d2d2d;
-            grid-gap: 15px;
+            background: rgb(41 41 41);
+            border: 1px solid #353535;
+            grid-gap: 10px;
         }
 
         dropdown-button-2 {
@@ -86,6 +86,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            z-index: -1;
         }
 
         label {
@@ -104,7 +105,10 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border-bottom: 1px solid #333333;
+            background: #353535;
+            padding: 0 10px;
+            box-sizing: border-box;
+            width: 100%;
         }
 
         input[type="range"] {
@@ -114,7 +118,7 @@
         }
 
         .fader {
-            grid-gap: 15px;
+            grid-gap: 20px;
             display: grid;
             justify-content: center;
             grid-template-columns: 1fr auto auto 1fr;
@@ -130,14 +134,14 @@
         .fader audio-meter-vertical {
             grid-column: 3;
             height: 100%;
-            background: #1b1b1b;
-            width: 10px;
+            width: 12px;
         }
 
         .mixerOutput gyro-knob {
             grid-row: 3;
             width: 50px;
             height: 65px;
+            margin-bottom: 10px;
         }
 
     </style>

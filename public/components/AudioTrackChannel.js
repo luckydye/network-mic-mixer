@@ -6,10 +6,11 @@ import FluidInput from './FluidInput.js';
 export default class AudioTrackChannel extends LitElement {
 
     static get styles() {
+        console.log(arguments);
         return css`
             :host {
-                background: rgb(39, 39, 39);
-                border: 1px solid #2d2d2d;
+                background: rgb(64 64 64);
+                border: 1px solid rgb(64 64 64);
                 min-width: 80px;
                 display: grid;
                 grid-template-rows: auto 1fr;
@@ -20,11 +21,10 @@ export default class AudioTrackChannel extends LitElement {
                 text-align: center;
                 padding: 6px 6px;
                 box-sizing: border-box;
-                background: #333333;
+                background: rgb(78 78 78);
                 user-select: none;
             }
             .container {
-                padding: 5px 5px 10px 5px;
                 display: grid;
                 grid-template-rows: auto auto auto 1fr auto;
             }
@@ -42,14 +42,14 @@ export default class AudioTrackChannel extends LitElement {
             }
             .level-meter audio-meter-vertical {
                 grid-column: 3;
-                width: 10px;
-                background: #1b1b1b;
+                width: 12px;
             }
-            .pan {
+            .gain {
+                margin-top: 2px;
                 display: flex;
                 justify-content: center;
             }
-            .pan gyro-knob {
+            .gain gyro-knob {
                 transform: scale(0.9);
             }
 
@@ -63,12 +63,13 @@ export default class AudioTrackChannel extends LitElement {
             }
 
             .header {
-                margin-top: 4px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 flex-direction: column;
-                padding: 5px 0;
+                margin-top: 5px;
+                padding: 8px 0px;
+                background: rgb(78 78 78);
             }
 
             button {
@@ -88,11 +89,29 @@ export default class AudioTrackChannel extends LitElement {
             button:active {
                 filter: brightness(0.9);
             }
+
+            .delay {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 8px 0;
+                background: rgb(53 53 53);
+            }
+
+            .color {
+                width: 100%;
+                height: 4px;
+                background: var(--color);
+                grid-row: 6;
+            }
         `;
     }
 
     constructor(audioTrack) {
         super();
+
+        this.color = `hsl(${Math.random() * 360}, 55%, 50%)`;
+        this.style.setProperty('--color', this.color);
 
         this.track = audioTrack;
         this.meter = new AudioStreamMeterVertecal(this.track.context);
@@ -163,7 +182,7 @@ export default class AudioTrackChannel extends LitElement {
                 <span>${label}</span>
             </div>
             <div class="container">
-                <div class="pan">
+                <div class="gain">
                     ${this.knob}
                 </div>
                 <div class="header">
@@ -176,6 +195,7 @@ export default class AudioTrackChannel extends LitElement {
                 <div class="delay" style="grid-row: 5;">
                     ${this.delayInput}
                 </div>
+                <div class="color"></div>
             </div>
         `;
     }

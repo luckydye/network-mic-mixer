@@ -14,9 +14,9 @@ export default class LevelSlider extends HTMLElement {
                     width: 8px;
                     height: 200px;
 
-                    --color-input-background: #1B1B1B;
-                    --color-input-hover-background: #1c1c1c;
-                    --color-input-active-background: #1c1c1c;
+                    --color-input-background: #313131;
+                    --color-input-hover-background: #333;
+                    --color-input-active-background: #222;
 				}
 
                 .input-container {
@@ -34,10 +34,11 @@ export default class LevelSlider extends HTMLElement {
                     height: 100%;
                     width: 100%;
                     box-sizing: border-box;
-                    padding-bottom: 21px;
-                    padding-top: 21px;
+                    padding-bottom: 15px;
+                    padding-top: 15px;
                     background: var(--color-input-background);
                     border-radius: 6px;
+                    border: 1px solid rgb(56 56 56);
                 }
                 .slider:before {
                     content: "";
@@ -69,19 +70,22 @@ export default class LevelSlider extends HTMLElement {
                     left: 50%;
                     border-radius: 6px;
                     width: 20px;
-                    height: 40px;
+                    height: 34px;
                     bottom: calc(100% * var(--value));
-                    background: hsl(227deg 35% 48%);
                     border: 0px solid hsl(227deg 53% 59%);
                     transform: translate(-50%, 50%);
                     box-shadow: 1px 3px 8px rgb(0 0 0 / 25%);
+                    overflow: hidden;
+                }
+                .thumb svg {
+                    width: 100%;
+                    display: block;
                 }
                 .thumb:hover {
-                    background: hsl(227deg 35% 52%);
+                    filter: brightness(1.1);
                 }
                 .slider[active] .thumb {
-                    background: hsl(227deg 35% 42%);
-                    filter: brightness(1.15);
+                    filter: brightness(1.2);
                 }
 
                 .value-container {
@@ -125,20 +129,20 @@ export default class LevelSlider extends HTMLElement {
             <div class="slider">
                 <div class="input-container">
                     <span class="thumb">
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="42" viewBox="0 0 22 42">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="34px" viewBox="0 0 22 42">
                             <defs>
-                            <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
-                                <stop offset="0" stop-color="#3d3d3d"/>
-                                <stop offset="0.356" stop-color="#757575"/>
-                                <stop offset="0.82" stop-color="#3b3b3b"/>
-                                <stop offset="1" stop-color="#111"/>
-                            </linearGradient>
+                                <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+                                    <stop offset="0" stop-color="#3d3d3d"/>
+                                    <stop offset="0.356" stop-color="#757575"/>
+                                    <stop offset="0.82" stop-color="#3b3b3b"/>
+                                    <stop offset="1" stop-color="#333"/>
+                                </linearGradient>
                             </defs>
                             <g id="Group_1" data-name="Group 1" transform="translate(-120 -325)">
-                            <rect id="Rectangle_1" data-name="Rectangle 1" width="22" height="42" rx="4" transform="translate(120 325)" fill="#3d3d3d"/>
-                            <rect id="Rectangle_2" data-name="Rectangle 2" width="22" height="16" rx="4" transform="translate(120 351)" fill="url(#linear-gradient)"/>
-                            <line id="Line_1" data-name="Line 1" x2="22" transform="translate(120 346)" fill="none" stroke="#000" stroke-width="1"/>
-                            <rect id="Rectangle_3" data-name="Rectangle 3" width="22" height="17" rx="4" transform="translate(142 342) rotate(180)" fill="url(#linear-gradient)"/>
+                                <rect id="Rectangle_1" data-name="Rectangle 1" width="22" height="42" rx="0" transform="translate(120 325)" fill="#3d3d3d"/>
+                                <rect id="Rectangle_2" data-name="Rectangle 2" width="22" height="16" rx="0" transform="translate(120 351)" fill="url(#linear-gradient)"/>
+                                <line id="Line_1" data-name="Line 1" x2="22" transform="translate(120 346)" fill="none" stroke="#222" stroke-width="1"/>
+                                <rect id="Rectangle_3" data-name="Rectangle 3" width="22" height="17" rx="0" transform="translate(142 342) rotate(180)" fill="url(#linear-gradient)"/>
                             </g>
                         </svg>
                     </span>

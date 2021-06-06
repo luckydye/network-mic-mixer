@@ -125,7 +125,9 @@ let inputCounter = 0;
 
 function handleNewInput(mixer, stream, label) {
     const track = new AudioTrack(mixer.context);
-    track.audioSource.setInputStream(stream);
+    if(stream) {
+        track.audioSource.setInputStream(stream);
+    }
     track.name = label;
     mixer.addTrack(track);
 
@@ -161,6 +163,9 @@ async function init() {
         inputCounter++;
         handleNewInput(mixer, stream, clientId);
     });
+
+    handleNewInput(mixer, null, "clientId");
+    handleNewInput(mixer, null, "clientId2");
 
     const mixOutNode = mixer.getOutputNode(audioContext);
 

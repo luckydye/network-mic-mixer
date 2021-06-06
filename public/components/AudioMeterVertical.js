@@ -4,7 +4,7 @@ import AudioStreamMeter from "./AudioMeter.js";
 export default class AudioStreamMeterVertecal extends AudioStreamMeter {
 
     renderAudioMeter() {
-        const channelHeight = 2;
+        const channelHeight = 4;
         this.canvas.height = 100;
         this.canvas.width = channelHeight * this.levels.length + (this.levels.length - 1);
 
@@ -30,6 +30,9 @@ export default class AudioStreamMeterVertecal extends AudioStreamMeter {
 
             // draw everything
             const x = channel * channelHeight + (channel);
+
+            this.context.fillStyle = "#313131";
+            this.context.fillRect(x, this.canvas.height, channelHeight, -this.canvas.height);
 
             this.context.fillStyle = "#1a8e1a";
             this.context.fillRect(x, this.canvas.height, channelHeight, -this.target[channel]);
