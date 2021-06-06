@@ -24,10 +24,9 @@ export default class AudioTrackChannel extends LitElement {
                 user-select: none;
             }
             .container {
-                grid-gap: 15px;
-                padding: 0 5px 10px 5px;
+                padding: 5px 5px 10px 5px;
                 display: grid;
-                grid-template-rows: 10px 1fr 70px;
+                grid-template-rows: auto auto auto 1fr auto;
             }
             .return-send {
                 padding: 4px;
@@ -35,7 +34,8 @@ export default class AudioTrackChannel extends LitElement {
             .level-meter {
                 display: grid;
                 grid-template-columns: 1fr auto auto 1fr;
-                grid-gap: 20px;
+                gap: 20px;
+                margin: 15px 0 20px 0;
             }
             .level-meter vertical-slider {
                 grid-column: 2;
@@ -60,6 +60,33 @@ export default class AudioTrackChannel extends LitElement {
             level-slider {
                 height: 100%;
                 grid-column: 2;
+            }
+
+            .header {
+                margin-top: 4px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                padding: 5px 0;
+            }
+
+            button {
+                padding: 8px;
+                border: 1px solid #929292;
+                background: grey;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            button:hover {
+                filter: brightness(1.2);
+            }
+            button[active] {
+                background: hsl(0deg 50% 44%);
+                border-color: hsl(0deg 55% 50%);
+            }
+            button:active {
+                filter: brightness(0.9);
             }
         `;
     }
@@ -91,6 +118,18 @@ export default class AudioTrackChannel extends LitElement {
         this.slider.addEventListener('change', e => {
             this.knob.setValue(channel.getGain());
             channel.setGain(this.slider.value);
+        })
+
+        this.muteBtn = document.createElement('button');
+        this.muteBtn.innerHTML = "Mute";
+        this.muteBtn.addEventListener('click', e => {
+            if(channel.muted) {
+                this.muteBtn.removeAttribute('active');
+                channel.unmute();
+            } else {
+                this.muteBtn.setAttribute('active', '');
+                channel.mute();
+            }
         })
         
         this.delayInput = new FluidInput();
@@ -124,16 +163,19 @@ export default class AudioTrackChannel extends LitElement {
                 <span>${label}</span>
             </div>
             <div class="container">
-                <div class="header">
-                </div>
-                <div class="level-meter">
-                    ${this.slider}
-                    ${this.meter}
-                </div>
                 <div class="pan">
                     ${this.knob}
                 </div>
-                ${this.delayInput}
+                <div class="header">
+                    ${this.muteBtn}
+                </div>
+                <div class="level-meter" style="grid-row: 4;">
+                    ${this.slider}
+                    ${this.meter}
+                </div>
+                <div class="delay" style="grid-row: 5;">
+                    ${this.delayInput}
+                </div>
             </div>
         `;
     }

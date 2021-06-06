@@ -40,11 +40,14 @@ export default class AudioChannel {
     }
 
     setGain(val = 0) {
-        this.gain.gain.setValueAtTime(val, this.context.currentTime + 0.01);
+        this.inputGain = val;
+        if(!this.muted) {
+            this.gain.gain.setValueAtTime(val, this.context.currentTime + 0.01);
+        }
     }
 
     getGain() {
-        return this.gain.gain.value;
+        return this.inputGain;
     }
 
     setInput(source) {
