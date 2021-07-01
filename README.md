@@ -1,9 +1,7 @@
 # rtc-radio
 
-### Notes
-Todo:
-- Send raw input audio over webrtc.
-- Use audio recorder for recieving audio data.
-- Rework webrtc connection nagotiations
-- Use QR codes for easy tethering
-- Reconnect protocoll? - every client assigns itself a fixed uid
+### Features:
+- Send input audio from any device running a browser to a central mixer device
+- Monitor and Mix to a selected output device
+- Send audio to any application (via for example an virtual audio cable)
+- Connect device via a QR code
