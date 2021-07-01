@@ -6,3 +6,6 @@
 - Send audio to any application (via for example an virtual audio cable)
 - Connect device via a QR code
 - Synchronize all inputs in the mixer by ms delays
+
+**Disclaimer**
+Only for private network use. All senders are broadcast to the whole network.
