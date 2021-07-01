@@ -5,3 +5,4 @@
 - Monitor and Mix to a selected output device
 - Send audio to any application (via for example an virtual audio cable)
 - Connect device via a QR code
+- Synchronize all inputs in the mixer by ms delays
