@@ -1,4 +1,9 @@
-# rtc-radio
+# network-mic-mixer
+
+A WebRTC based web app for mixing multiple wireless audio signals to one wireless output device.
+
+#### Example usage:
+Multiple senders connect to one mixing device, outputing audio into the built in camera microphone. = Wireless microphones with phones.
 
 ### Features:
 - Send input audio from any device running a browser to a central mixer device
