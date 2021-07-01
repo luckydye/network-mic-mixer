@@ -7,5 +7,5 @@
 - Connect device via a QR code
 - Synchronize all inputs in the mixer by ms delays
 
-**Disclaimer**
+**Disclaimer:**
 Only for private network use. All senders are broadcast to the whole network.
